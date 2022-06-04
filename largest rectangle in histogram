@@ -1,0 +1,109 @@
+public class LargestRectangleInHistogram {
+
+public static void main(String[] args) {
+    int[] arr = {1,1};
+    int res = largestRectangleArea(arr);
+    System.out.println();
+    System.out.println("res:"+res);
+}
+
+/* keep "-1" at index 0 and length-1.
+ *  This will help to find if we can move left/right in case no other smaller element is present
+ * 
+ * for 1st element "2"
+ * can it expand on left? No , because it has smaller element on left
+ * can it expand on right? No, because it has smaller element on right
+ * 
+ * for 2nd element "1"
+ * can it expand on left? Yes , because it has all bigger elements on left
+ * can it expand on right? Yes , because it has all bigger elements on right
+ * so where to stop on left and where to stop on right? That's what give me intuition to add -1 at index 0 and length-1
+ * 
+ * so "1" can move till one more index in left and "4" more indexes in right.
+ * We are stopping as soon as we get nearest smallest on left(NSL) and nearest smallest on right(NSR)
+ * So for every element, we can find NSL and NSR
+ * 
+ * area=current index+(nsl[i]*current_index)+(nsr[i]*current_index)
+ * how we got formula for area? lets take example of index 1: "1"
+ * 1 can go till 1 more index in left and 4 more index in right
+ * so total area for 1= 1+(1*1)+(1*4)=6
+ * 
+ * maximise the area and return
+ * */
+
+public static int largestRectangleArea(int[] arr) {
+    int n = arr.length;
+    
+    int[] helper = new int[n + 2];
+    helper[0] = -1;  //keep "-1" at index 0
+    int x = 1;
+    for (int i = 0; i < n; i++) {
+        helper[x++] = arr[i];
+    }
+    helper[x] = -1; //keep "-1" at index length-1.
+
+    int[] l = NSL(helper); //nearest smaller to left. in case no smaller -1 which we kept at index 0 would be the smaller
+    int[] r = NSR(helper); //nearest smaller to right. in case no smaller -1 which we kept at index length-1 would be the smaller
+
+    int max = Integer.MIN_VALUE;
+    for (int i = 0; i < n; i++) {
+        int area = arr[i] + (arr[i] * l[i]) + (arr[i] * r[i]);
+        max = Math.max(max, area);
+    }
+
+    return max;
+}
+
+private static int[] NSL(int[] arr) {
+    int[] res = new int[arr.length - 2];
+    int x = 0;
+    Stack<Integer> stack = new Stack<>();
+    stack.push(0);
+    for (int i = 1; i <= arr.length - 2; i++) {
+        if (!stack.isEmpty()) {
+            if (arr[stack.peek()] < arr[i]) {
+                res[x++] = i - stack.peek() - 1;
+            } else {
+                while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {
+                    stack.pop();
+                }
+                if (!stack.isEmpty()) {
+                    res[x++] = i - stack.peek() - 1;
+                } else {
+                    res[x++] = 0;
+                }
+            }
+        } else {
+            res[x++] = 0;
+        }
+        stack.push(i);
+    }
+    return res;
+}
+
+private static int[] NSR(int[] arr) {
+    int[] res = new int[arr.length - 2];
+    int x = res.length-1;
+    Stack<Integer> stack = new Stack<>();
+    stack.push(arr.length-1);
+    for (int i = arr.length - 2; i >= 1; i--) {
+        if (!stack.isEmpty()) {
+            if (arr[stack.peek()] < arr[i]) {
+                res[x--] = stack.peek()-i - 1;
+            } else {
+                while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {
+                    stack.pop();
+                }
+                if (!stack.isEmpty()) {
+                    res[x--] = stack.peek()-i - 1;
+                } else {
+                    res[x--] = 0;
+                }
+            }
+        } else {
+            res[x--] = 0;
+        }
+        stack.push(i);
+    }
+    return res;
+}
