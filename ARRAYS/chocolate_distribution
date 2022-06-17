@@ -1,7 +1,11 @@
+Time Complexity: O(n Log n) as we apply sorting before subarray search.
 
-import java.util.*;
+Auxiliary Space: O(1)
 
-class choclate {
+
+
+
+class chocolate {
 	
 	// arr[0..n-1] represents sizes of
 	// packets. m is number of students.
