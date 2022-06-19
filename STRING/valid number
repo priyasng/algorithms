@@ -1,0 +1,157 @@
+class Solution {
+    private boolean isDigit(char c)
+    {
+        switch(c)
+        {
+            case '0':
+                return true;
+            case '1':
+                return true;
+            case '2':
+                return true;
+            case '3':
+                return true;
+            case '4':
+                return true;
+            case '5':
+                return true;
+            case '6':
+                return true;
+            case '7':
+                return true;
+            case '8':
+                return true;
+            case '9':
+                return true;
+            default:
+                return false;
+        }
+    }
+    private boolean checkDecimal(String s)
+    {
+        int size = s.length();
+        if(size == 0)
+        {
+            return false;
+        }
+        else
+        {
+            if(s.charAt(0) == '.')
+            {
+                if(size == 1)
+                {
+                    return false;
+                }
+                int index = 1;
+                while(index < size && isDigit(s.charAt(index)))
+                {
+                    index++;
+                }
+                return index == size;
+            }
+            else
+            {
+                int index = 0;
+                while(index < size && isDigit(s.charAt(index)))
+                {
+                    index++;
+                }
+                if(index == size)
+                {
+                    return true;
+                }
+                else if (s.charAt(index) != '.')
+                {
+                    return false;
+                }
+                else
+                {
+                    index++;
+                    while(index < size && isDigit(s.charAt(index)))
+                    {
+                        index++;
+                    }
+                    return index == size;
+                }
+            }
+        }
+    }
+    private boolean checkEpart(String s)
+    {
+        int size = s.length();
+        if(s.charAt(0) == 'e' || s.charAt(0) == 'E')
+        {
+            if(size == 1)
+            {
+                return false;
+            }
+            int index = 1;
+            if(s.charAt(1) == '+' || s.charAt(1) == '-')
+            {
+                index = 2;
+                if(size ==2)
+                {
+                    return false;
+                }
+                while(index < size && isDigit(s.charAt(index)))
+                {
+                    index++;
+                }
+                return index == size;
+            }
+            else
+            {
+                while(index < size  && isDigit(s.charAt(index)))
+                {
+                    index++;
+                }
+                return index== size;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public boolean isNumber(String s) {
+        // At max there can only be 1 . and 1 e or E
+        int size = s.length();
+        if(s.charAt(0) == '+' || s.charAt(0) == '-' )
+        {
+            if(size ==1)
+            {
+                return false;
+            }
+            int index = 1;
+            while(index <size && (isDigit(s.charAt(index)) || s.charAt(index) == '.'))
+            {
+                index++;
+            }
+            if(index == size)
+            {
+                return checkDecimal(s.substring(1,index));
+            }
+            else
+            {
+                return checkDecimal(s.substring(1,index)) && checkEpart(s.substring(index,size));
+            }
+        }
+        else
+        {
+            int index = 0;
+            while(index < size && (isDigit(s.charAt(index)) || s.charAt(index) == '.'))
+            {
+                index++;
+            }
+            if(index == size)
+            {
+                return checkDecimal(s.substring(0,index));
+            }
+            else
+            {
+                return checkDecimal(s.substring(0,index)) && checkEpart(s.substring(index,size));
+            }
+            
+        }
+    }
+}
